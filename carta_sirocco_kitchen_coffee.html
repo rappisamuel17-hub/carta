@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="es" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIROCCO | Kitchen & Coffee - Menú Digital Exclusivo</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        gold: {
+                            400: '#F3E5AB',
+                            500: '#D4AF37',
+                            600: '#B8860B',
+                            700: '#8B6508',
+                        },
+                        darkBg: '#090A0E',
+                        darkCard: 'rgba(18, 22, 31, 0.75)',
+                    },
+                    fontFamily: {
+                        serif: ['Playfair Display', 'Georgia', 'serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        accent: ['Cormorant Garamond', 'serif'],
+                    },
+                    animation: {
+                        'pulse-glow': 'pulseGlow 3s infinite ease-in-out',
+                        'float': 'float 6s infinite ease-in-out',
+                        'shimmer': 'shimmer 2.5s infinite linear',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { opacity: 0.4, transform: 'scale(1)' },
+                            '50%': { opacity: 0.8, transform: 'scale(1.05)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        shimmer: {
+                            '0%': { backgroundPosition: '-200% 0' },
+                            '100%': { backgroundPosition: '200% 0' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* Custom 3D & Luxury Styling */
+        body {
+            background-color: #08090d;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Glow Canvas */
+        #bgCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Glassmorphism card effects */
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 175, 55, 0.18);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+        }
+
+        .glass-card:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            box-shadow: 0 20px 40px -15px rgba(212, 175, 55, 0.25);
+        }
+
+        /* Perspective for 3D card tilt */
+        .perspective-container {
+            perspective: 1200px;
+        }
+
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: transform 0.15s ease-out, box-shadow 0.2s ease, border-color 0.3s ease;
+            will-change: transform;
+        }
+
+        .tilt-layer-3d {
+            transform: translateZ(35px);
+        }
+
+        .tilt-layer-badge {
+            transform: translateZ(50px);
+        }
+
+        .tilt-layer-img {
+            transform: translateZ(25px);
+        }
+
+        /* Gold Gradient Text */
+        .gold-text-gradient {
+            background: linear-gradient(135deg, #FFF0BD 0%, #D4AF37 50%, #9A7B1C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gold-border-glow {
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+        }
+
+        /* Hide scrollbars but keep scrollability */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Luxury shimmer overlay */
+        .shimmer-btn {
+            background: linear-gradient(90deg, #D4AF37 0%, #FFF3B3 50%, #B8860B 100%);
+            background-size: 200% 100%;
+            transition: all 0.4s ease;
+        }
+        .shimmer-btn:hover {
+            background-position: 100% 0;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased text-gray-200 min-h-screen relative selection:bg-gold-500 selection:text-black">
+
+    <!-- Ambient Floating Particles Canvas -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Top Navigation Header -->
+    <header class="sticky top-0 z-40 backdrop-blur-md bg-darkBg/80 border-b border-gold-500/20 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <!-- Brand Logo -->
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                <div class="w-11 h-11 rounded-full bg-gradient-to-br from-gold-400 via-gold-500 to-amber-700 p-[2px] shadow-lg shadow-gold-500/20 flex items-center justify-center">
+                    <div class="w-full h-full bg-darkBg rounded-full flex items-center justify-center">
+                        <i class="fa-solid font-serif text-gold-400 text-xl font-bold">S</i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="font-serif text-2xl font-bold tracking-wider text-white flex items-center gap-1">
+                        SIROCCO
+                        <span class="text-xs px-2 py-0.5 rounded bg-gold-500/10 border border-gold-500/30 text-gold-400 font-sans tracking-normal font-normal">Gourmet</span>
+                    </h1>
+                    <p class="text-[10px] uppercase tracking-[0.25em] text-gold-400 font-medium">Kitchen & Coffee</p>
+                </div>
+            </div>
+
+            <!-- Search Bar & Cart Trigger -->
+            <div class="flex items-center space-x-3 sm:space-x-4">
+                <!-- Search Toggle Box -->
+                <div class="relative hidden sm:block w-48 md:w-64">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" id="searchInput" oninput="handleSearch(this.value)" placeholder="Buscar plato, ingrediente..." 
+                           class="w-full bg-white/5 border border-gold-500/20 rounded-full py-1.5 pl-9 pr-4 text-xs text-white placeholder-gray-400 focus:outline-none focus:border-gold-500/60 focus:ring-1 focus:ring-gold-500/50 transition">
+                </div>
+
+                <!-- Floating Order Button -->
+                <button onclick="toggleCartModal()" class="relative group bg-gradient-to-r from-gold-600 via-gold-500 to-amber-600 hover:from-gold-500 hover:to-gold-400 text-black font-semibold px-4 py-2 rounded-full shadow-lg shadow-gold-500/20 flex items-center space-x-2 transition-all transform active:scale-95">
+                    <i class="fa-solid fa-utensils text-sm"></i>
+                    <span class="text-xs font-bold uppercase tracking-wider hidden sm:inline">Mi Pedido</span>
+                    <span id="cartBadgeCount" class="bg-black text-gold-400 text-xs font-extrabold w-5 h-5 rounded-full flex items-center justify-center border border-gold-400/50">0</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Search Bar (Only visible on small screens) -->
+        <div class="px-4 pb-3 sm:hidden">
+            <div class="relative w-full">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                <input type="text" id="searchInputMobile" oninput="handleSearch(this.value)" placeholder="Buscar en el menú..." 
+                       class="w-full bg-white/5 border border-gold-500/20 rounded-full py-2 pl-9 pr-4 text-xs text-white placeholder-gray-400 focus:outline-none focus:border-gold-500/60 transition">
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner Section -->
+    <section class="relative min-h-[420px] sm:min-h-[480px] flex items-center justify-center overflow-hidden py-12 px-4">
+        <!-- Hero Background Image & Gradient overlay -->
+        <div class="absolute inset-0 z-0">
+            <img src="https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1920&q=80" alt="Sirocco Culinary" class="w-full h-full object-cover object-center opacity-30 filter brightness-75 scale-105 transition-transform duration-1000">
+            <div class="absolute inset-0 bg-gradient-to-b from-darkBg/90 via-darkBg/70 to-darkBg"></div>
+            <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#08090d_90%)]"></div>
+        </div>
+
+        <!-- Hero Card Content -->
+        <div class="relative z-10 max-w-4xl text-center px-4 animate-float">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-gold-500/30 bg-black/40 backdrop-blur-md mb-4 text-xs text-gold-400 tracking-widest uppercase">
+                <i class="fa-solid fa-crown text-xs text-gold-400"></i>
+                Gastronomía Auténtica & Tradición
+            </div>
+
+            <h2 class="font-serif text-4xl sm:text-6xl font-extrabold text-white tracking-tight mb-4 leading-tight">
+                Una Experiencia <span class="gold-text-gradient italic">Inolvidable</span>
+            </h2>
+
+            <p class="font-accent text-lg sm:text-2xl text-gray-300 max-w-2xl mx-auto italic font-normal mb-8 leading-relaxed">
+                "Sabores tradicionales colombianos con el toque de elegancia y pasión de la cocina Sirocco."
+            </p>
+
+            <!-- Global Special Addition Notice -->
+            <div class="inline-block glass-card rounded-2xl p-4 sm:p-5 border-gold-500/30 max-w-lg mx-auto shadow-2xl">
+                <div class="flex items-center justify-center space-x-3">
+                    <div class="w-10 h-10 rounded-full bg-gold-500/20 border border-gold-500/40 flex items-center justify-center text-gold-400 flex-shrink-0">
+                        <i class="fa-solid fa-bacon text-lg"></i>
+                    </div>
+                    <div class="text-left">
+                        <p class="text-xs uppercase tracking-widest text-gold-400 font-bold">Recomendación de la Casa</p>
+                        <p class="text-sm font-medium text-white">Adiciona Chicharrón Crocante a tus Sopas de la Abuela por solo <span class="text-gold-400 font-bold">$9.900</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Category Tabs Navigation bar -->
+    <nav class="sticky top-20 z-30 bg-darkBg/95 backdrop-blur-md border-y border-gold-500/20 py-3 shadow-2xl">
+        <div class="max-w-7xl mx-auto px-4 overflow-x-auto no-scrollbar">
+            <div class="flex items-center justify-start sm:justify-center space-x-2 sm:space-x-3 min-w-max" id="categoryTabs">
+                <button onclick="filterCategory('todos')" data-cat="todos" 
+                        class="cat-tab active flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 border border-gold-500/40 bg-gold-500 text-black shadow-lg shadow-gold-500/20">
+                    <i class="fa-solid fa-border-all"></i>
+                    <span>Todos</span>
+                </button>
+
+                <button onclick="filterCategory('entradas')" data-cat="entradas" 
+                        class="cat-tab flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 border border-gold-500/20 bg-white/5 text-gray-300 hover:text-gold-400 hover:border-gold-500/40">
+                    <i class="fa-solid fa-plate-wheat"></i>
+                    <span>Entradas</span>
+                </button>
+
+                <button onclick="filterCategory('carnes')" data-cat="carnes" 
+                        class="cat-tab flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 border border-gold-500/20 bg-white/5 text-gray-300 hover:text-gold-400 hover:border-gold-500/40">
+                    <i class="fa-solid fa-drumstick-bite"></i>
+                    <span>Carnes de Temporada</span>
+                </button>
+
+                <button onclick="filterCategory('especialidad')" data-cat="especialidad" 
+                        class="cat-tab flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 border border-gold-500/20 bg-white/5 text-gray-300 hover:text-gold-400 hover:border-gold-500/40">
+                    <i class="fa-solid fa-fire text-amber-500"></i>
+                    <span>Especialidad & Tradición</span>
+                </button>
+
+                <button onclick="filterCategory('sopas')" data-cat="sopas" 
+                        class="cat-tab flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 border border-gold-500/20 bg-white/5 text-gray-300 hover:text-gold-400 hover:border-gold-500/40">
+                    <i class="fa-solid fa-bowl-hot"></i>
+                    <span>Sopas de la Abuela</span>
+                </button>
+
+                <button onclick="filterCategory('bebidas')" data-cat="bebidas" 
+                        class="cat-tab flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 border border-gold-500/20 bg-white/5 text-gray-300 hover:text-gold-400 hover:border-gold-500/40">
+                    <i class="fa-solid fa-glass-water"></i>
+                    <span>Bebidas</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Grid -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative z-10">
+
+        <!-- Category Title Header -->
+        <div class="flex items-center justify-between mb-8 border-b border-gold-500/20 pb-4">
+            <div>
+                <h3 id="currentCategoryTitle" class="font-serif text-3xl sm:text-4xl font-bold text-white tracking-wide">
+                    Menú Completo
+                </h3>
+                <p id="currentCategorySub" class="text-xs text-gold-400 uppercase tracking-widest mt-1">Platos elaborados al momento con insumos de alta calidad</p>
+            </div>
+            <span id="dishCounterBadge" class="text-xs bg-gold-500/10 border border-gold-500/30 text-gold-400 px-3 py-1 rounded-full font-semibold">
+                23 Platos
+            </span>
+        </div>
+
+        <!-- Dishes Grid (3D Interactive Tilt Cards) -->
+        <div id="dishesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 perspective-container">
+            <!-- Dishes will be injected dynamically via JS -->
+        </div>
+
+        <!-- Empty State Search Result -->
+        <div id="emptySearchState" class="hidden text-center py-16">
+            <i class="fa-solid fa-utensils-slash text-5xl text-gold-500/40 mb-4"></i>
+            <h4 class="font-serif text-2xl font-bold text-white">No encontramos coincidencias</h4>
+            <p class="text-sm text-gray-400 mt-2">Intenta buscar con otra palabra clave o selecciona otra categoría.</p>
+            <button onclick="resetFilters()" class="mt-6 px-6 py-2 bg-gold-500 text-black font-semibold rounded-full text-xs uppercase tracking-widest hover:bg-gold-400 transition">
+                Ver todos los platos
+            </button>
+        </div>
+    </main>
+
+    <!-- Dish Detail Modal (3D Interactive Lightbox) -->
+    <div id="dishModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md opacity-0 pointer-events-none transition-all duration-300">
+        <div class="relative w-full max-w-2xl glass-card rounded-3xl overflow-hidden border border-gold-500/40 shadow-2xl transform scale-95 transition-all duration-300 max-h-[90vh] flex flex-col">
+            <!-- Close Button -->
+            <button onclick="closeDishModal()" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/60 border border-gold-500/30 text-white flex items-center justify-center hover:bg-gold-500 hover:text-black transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Modal Content Body -->
+            <div id="modalBody" class="overflow-y-auto p-0 no-scrollbar">
+                <!-- Dynamic Content injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Order Summary / Drawer Modal -->
+    <div id="cartDrawer" class="fixed inset-y-0 right-0 z-50 w-full sm:w-[420px] bg-darkBg/95 backdrop-blur-2xl border-l border-gold-500/30 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+        <!-- Drawer Header -->
+        <div class="p-6 border-b border-gold-500/20 flex items-center justify-between bg-black/40">
+            <div class="flex items-center space-x-3">
+                <div class="w-9 h-9 rounded-full bg-gold-500/20 border border-gold-500/40 flex items-center justify-center text-gold-400">
+                    <i class="fa-solid fa-receipt"></i>
+                </div>
+                <div>
+                    <h3 class="font-serif text-xl font-bold text-white">Tu Pedido</h3>
+                    <p class="text-[10px] text-gold-400 uppercase tracking-widest">Sirocco Kitchen & Coffee</p>
+                </div>
+            </div>
+            <button onclick="toggleCartModal()" class="text-gray-400 hover:text-white transition text-lg">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- Drawer Items List -->
+        <div id="cartItemsContainer" class="flex-1 overflow-y-auto p-6 space-y-4 no-scrollbar">
+            <!-- Cart items injected dynamically -->
+        </div>
+
+        <!-- Drawer Footer & Checkout -->
+        <div class="p-6 border-t border-gold-500/20 bg-black/60 space-y-4">
+            <!-- Table / Name details -->
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-gold-400 mb-1">Mesa / Ubicación</label>
+                    <input type="text" id="tableInput" placeholder="Ej: Mesa 4" class="w-full bg-white/5 border border-gold-500/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-500">
+                </div>
+                <div>
+                    <label class="block text-[10px] uppercase tracking-wider text-gold-400 mb-1">Tu Nombre</label>
+                    <input type="text" id="customerNameInput" placeholder="Ej: Carlos M." class="w-full bg-white/5 border border-gold-500/20 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-500">
+                </div>
+            </div>
+
+            <!-- Price Calculations -->
+            <div class="space-y-1.5 border-t border-white/10 pt-3">
+                <div class="flex justify-between text-xs text-gray-400">
+                    <span>Subtotal</span>
+                    <span id="cartSubtotal">$0</span>
+                </div>
+                <div class="flex justify-between text-xs text-gray-400">
+                    <span>Servicio Recomendado (10%)</span>
+                    <span id="cartTip">$0</span>
+                </div>
+                <div class="flex justify-between text-base font-bold text-white pt-2 border-t border-white/10">
+                    <span>Total Estimado</span>
+                    <span id="cartTotal" class="text-gold-400 font-serif text-lg">$0</span>
+                </div>
+            </div>
+
+            <!-- Send via WhatsApp Action Button -->
+            <button onclick="sendOrderToWhatsApp()" class="w-full shimmer-btn py-3.5 rounded-2xl text-black font-extrabold text-xs uppercase tracking-widest shadow-xl flex items-center justify-center space-x-2">
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+                <span>Confirmar y Enviar Pedido</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer class="mt-20 border-t border-gold-500/20 bg-black/60 relative z-10 py-12 px-4">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-center md:text-left items-center">
+            <div>
+                <h4 class="font-serif text-2xl font-bold text-white tracking-widest">SIROCCO</h4>
+                <p class="text-xs text-gold-400 tracking-widest uppercase mt-1">Kitchen & Coffee</p>
+                <p class="text-xs text-gray-400 mt-3 leading-relaxed">
+                    Donde la cocina tradicional colombiana se fusiona con la sofisticación moderna y el mejor ambiente.
+                </p>
+            </div>
+
+            <div class="flex flex-col items-center justify-center space-y-2">
+                <div class="flex space-x-4">
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 border border-gold-500/30 flex items-center justify-center text-gold-400 hover:bg-gold-500 hover:text-black transition">
+                        <i class="fa-brands fa-instagram text-base"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 border border-gold-500/30 flex items-center justify-center text-gold-400 hover:bg-gold-500 hover:text-black transition">
+                        <i class="fa-brands fa-facebook-f text-base"></i>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/5 border border-gold-500/30 flex items-center justify-center text-gold-400 hover:bg-gold-500 hover:text-black transition">
+                        <i class="fa-solid fa-location-dot text-base"></i>
+                    </a>
+                </div>
+                <p class="text-xs text-gray-400 mt-2">Atención diaria de 11:30 AM a 10:00 PM</p>
+            </div>
+
+            <div class="text-center md:text-right">
+                <span class="inline-block px-3 py-1 bg-gold-500/10 border border-gold-500/30 text-gold-400 rounded-full text-xs font-semibold mb-2">
+                    <i class="fa-solid fa-shield-halved mr-1"></i> Menú 100% Digital e Interactivo
+                </span>
+                <p class="text-xs text-gray-500">© 2026 SIROCCO Kitchen & Coffee. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript Logic & Data -->
+    <script>
+        // Database of Dishes directly extracted from menu image
+        const menuDishes = [
+            // ENTRADAS
+            {
+                id: 1,
+                name: "Picadita Sirocco",
+                category: "entradas",
+                price: 22900,
+                description: "Deliciosa combinación de chicharrón crocante, papa criolla dorada, longaniza artesanal y morcillitas.",
+                image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80",
+                badge: "Ideal para Compartir",
+                options: ["Sin Picante", "Extra Hogao (+$2.000)"]
+            },
+            {
+                id: 2,
+                name: "Morcillitas y Papas Criollas Doradas",
+                category: "entradas",
+                price: 8900,
+                description: "Morcillitas seleccionadas acompañadas de crujientes papas criollas doradas al punto perfecto.",
+                image: "https://images.unsplash.com/photo-1541544741938-0af808871cc0?auto=format&fit=crop&w=800&q=80",
+                badge: "Tradicional",
+                options: []
+            },
+            {
+                id: 3,
+                name: "Chicharrón con Papas Criollas",
+                category: "entradas",
+                price: 15900,
+                description: "Crujiente chicharrón de cerdo frito artesanalmente, acompañado de papas criollas sazonadas.",
+                image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
+                badge: "Muy Crocante",
+                options: ["Con Limón extra"]
+            },
+            {
+                id: 4,
+                name: "Sopitas Típicas",
+                category: "entradas",
+                price: 7900,
+                description: "Porción individual de la sopa casera del día con auténtico sazón de hogar.",
+                image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+                badge: "Entrada Calientita",
+                options: []
+            },
+
+            // CARNES DE TEMPORADA
+            {
+                id: 5,
+                name: "Pechuga, Res o Lomo de Cerdo",
+                category: "carnes",
+                price: 18900,
+                description: "Corte jugoso a la plancha a tu elección: Pechuga de pollo, carne de res tierna o lomo de cerdo.",
+                image: "https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=800&q=80",
+                badge: "A la Plancha",
+                meatChoice: ["Pechuga a la Plancha", "Carne de Res", "Lomo de Cerdo"]
+            },
+            {
+                id: 6,
+                name: "Carne Gratinada Sirocco",
+                category: "carnes",
+                price: 23900,
+                description: "Deliciosa carne, lomo o pechuga a la plancha, gratinada con abundante queso, tomates asados y chimichurri artesanal de la casa.",
+                image: "https://images.unsplash.com/photo-1558030006-450675393462?auto=format&fit=crop&w=800&q=80",
+                badge: "Gratinado Especial",
+                meatChoice: ["Carne de Res", "Lomo de Cerdo", "Pechuga de Pollo"]
+            },
+            {
+                id: 7,
+                name: "Bistec a Caballo",
+                category: "carnes",
+                price: 25900,
+                description: "Carne, lomo o pechuga asada bañada en hogao criollo tradicional de la casa y huevo frito, acompañado de arroz, papas a la francesa, patacón y ensalada fresca.",
+                image: "https://images.unsplash.com/photo-1600891964092-4316c288032e?auto=format&fit=crop&w=800&q=80",
+                badge: "Plato Fuerte Típico",
+                meatChoice: ["Carne de Res", "Lomo de Cerdo", "Pechuga de Pollo"]
+            },
+
+            // ESPECIALIDAD Y TRADICIÓN
+            {
+                id: 8,
+                name: "Punta de Anca",
+                category: "especialidad",
+                price: 29900,
+                description: "El mejor corte de la res, caracterizado por su jugosidad y sabor intenso. Acompañado de papa criolla, patacón con hogao casero y ensalada.",
+                image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
+                badge: "Corte Premium",
+                doneness: ["Término Medio", "3/4", "Bien Asado"]
+            },
+            {
+                id: 9,
+                name: "Trucha al Ajillo",
+                category: "especialidad",
+                price: 28900,
+                description: "Deliciosa trucha fresca dorada con fina salsa de ajo de la casa, acompañada de patacón crocante con hogao, arroz blanco y aguacate fresco.",
+                image: "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800&q=80",
+                badge: "Especial del Mar & Río",
+                options: []
+            },
+            {
+                id: 10,
+                name: "Parrillada Mixta",
+                category: "especialidad",
+                price: 29900,
+                description: "Generosa parrillada con carne de res, pechuga a la plancha, lomo de cerdo, chorizo campesino, papa criolla, patacón con hogao y ensalada.",
+                image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80",
+                badge: "Súper Completo",
+                options: []
+            },
+            {
+                id: 11,
+                name: "Costillas en Salsa BBQ",
+                category: "especialidad",
+                price: 32900,
+                description: "Supremas costillas de cerdo tiernas, bañadas en jugosa salsa BBQ ahumada de la casa, acompañadas de papa a la francesa, arroz y ensalada.",
+                image: "https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?auto=format&fit=crop&w=800&q=80",
+                badge: "Alto en Proteína",
+                options: []
+            },
+            {
+                id: 12,
+                name: "Bandeja Paisa Tradicional",
+                category: "especialidad",
+                price: 35900,
+                description: "La auténtica bandeja paisa: chicharrón crujiente, carne de res, huevo frito, rellena, longaniza, plátano maduro, arroz, aguacate y taza de frijoles caseros.",
+                image: "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=800&q=80",
+                badge: "Especial de la Casa",
+                options: ["Huevo tierno", "Huevo bien frito"]
+            },
+
+            // SOPAS DE LA ABUELA
+            {
+                id: 13,
+                name: "Ajiaco Andino",
+                category: "sopas",
+                price: 19900,
+                description: "Auténtico ajiaco andino espeso de guascas, acompañado de arroz blanco, aguacate cremoso, pollo desmenuzado, crema de leche y alcaparras.",
+                image: "https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=800&q=80",
+                badge: "Tradición Bogotá",
+                hasChicharronOption: true
+            },
+            {
+                id: 14,
+                name: "Cazuela de Frijoles Paisa",
+                category: "sopas",
+                price: 20900,
+                description: "Tradicional cazuela de frijoles paisas calientitos, acompañada a tu elección con carne o chicharrón, plátano maduro en cubos, aguacate y arroz.",
+                image: "https://images.unsplash.com/photo-1543339308-43e59d6b73a6?auto=format&fit=crop&w=800&q=80",
+                badge: "Favorito del Chef",
+                meatChoice: ["Con Chicharrón", "Con Carne Picada"],
+                hasChicharronOption: true
+            },
+
+            // BEBIDAS
+            {
+                id: 15,
+                name: "Limonada Natural",
+                category: "bebidas",
+                price: 4600,
+                description: "Refrescante limonada recién exprimida con hielo frappé.",
+                image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=800&q=80",
+                badge: "Refrescante"
+            },
+            {
+                id: 16,
+                name: "Limonada de Panela",
+                category: "bebidas",
+                price: 4600,
+                description: "Tradicional aguapanela fría con el equilibrio perfecto de limón fresco.",
+                image: "https://images.unsplash.com/photo-1621263764928-df1444c5e859?auto=format&fit=crop&w=800&q=80",
+                badge: "100% Colombiana"
+            },
+            {
+                id: 17,
+                name: "Jugo Natural en Agua",
+                category: "bebidas",
+                price: 6900,
+                description: "Jugo con fruta 100% natural preparada en agua frapada.",
+                image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=800&q=80",
+                flavors: ["Maracuyá", "Fresa", "Mora", "Mango", "Lulo"]
+            },
+            {
+                id: 18,
+                name: "Jugo Natural en Leche",
+                category: "bebidas",
+                price: 7900,
+                description: "Delicioso batido cremoso de fruta natural con leche entera.",
+                image: "https://images.unsplash.com/photo-1553530666-ba11a7da3888?auto=format&fit=crop&w=800&q=80",
+                flavors: ["Maracuyá", "Fresa", "Mora", "Mango", "Lulo"]
+            },
+            {
+                id: 19,
+                name: "Jugo de Mandarina 100% Natural",
+                category: "bebidas",
+                price: 7900,
+                description: "Puro jugo de mandarinas frescas exprimidas al instante.",
+                image: "https://images.unsplash.com/photo-1613478223719-2ab802602423?auto=format&fit=crop&w=800&q=80",
+                badge: "Sin Azúcar Añadida"
+            },
+            {
+                id: 20,
+                name: "Gaseosa 300 ML",
+                category: "bebidas",
+                price: 5900,
+                description: "Personal de 300ml bien fría.",
+                image: "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=800&q=80",
+                flavors: ["Coca-Cola Original", "Coca-Cola Zero", "Sprite", "Quatro"]
+            },
+            {
+                id: 21,
+                name: "Agua en Botella",
+                category: "bebidas",
+                price: 5900,
+                description: "Agua purificada de manantial 500ml.",
+                image: "https://images.unsplash.com/photo-1560023907-5f339617ea30?auto=format&fit=crop&w=800&q=80",
+                options: ["Con Gas", "Sin Gas"]
+            },
+            {
+                id: 22,
+                name: "Cerveza Corona",
+                category: "bebidas",
+                price: 8900,
+                description: "Cerveza Corona Extra helada servida con su tradicional rodaja de limón.",
+                image: "https://images.unsplash.com/photo-1608270586620-248524c67de9?auto=format&fit=crop&w=800&q=80",
+                badge: "Importada"
+            },
+            {
+                id: 23,
+                name: "Cerveza Club Colombia",
+                category: "bebidas",
+                price: 6900,
+                description: "Cerveza Club Colombia helada de la casa.",
+                image: "https://images.unsplash.com/photo-1535958636474-b021ee887b13?auto=format&fit=crop&w=800&q=80",
+                flavors: ["Dorada", "Negra", "Roja"]
+            }
+        ];
+
+        // App State Management
+        let cart = [];
+        let currentFilter = 'todos';
+        let searchQuery = '';
+
+        // Format Currency COP
+        function formatCOP(price) {
+            return '$' + price.toLocaleString('es-CO');
+        }
+
+        // Initialize Render
+        document.addEventListener('DOMContentLoaded', () => {
+            initCanvasParticles();
+            renderDishes();
+        });
+
+        // Ambient Floating Canvas Animation
+        function initCanvasParticles() {
+            const canvas = document.getElementById('bgCanvas');
+            const ctx = canvas.getContext('2d');
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            const particles = Array.from({ length: 45 }, () => ({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 2 + 0.5,
+                alpha: Math.random() * 0.5 + 0.1,
+                vx: (Math.random() - 0.5) * 0.3,
+                vy: -Math.random() * 0.4 - 0.1
+            }));
+
+            function draw() {
+                ctx.clearRect(0, 0, width, height);
+
+                particles.forEach(p => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+
+                    if (p.y < 0) p.y = height;
+                    if (p.x < 0) p.x = width;
+                    if (p.x > width) p.x = 0;
+
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = `rgba(212, 175, 55, ${p.alpha})`;
+                    ctx.shadowBlur = 8;
+                    ctx.shadowColor = '#D4AF37';
+                    ctx.fill();
+                });
+
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // Filter dishes by Category & Search Query
+        function getFilteredDishes() {
+            return menuDishes.filter(dish => {
+                const matchesCategory = currentFilter === 'todos' || dish.category === currentFilter;
+                const matchesSearch = searchQuery === '' || 
+                    dish.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                    dish.description.toLowerCase().includes(searchQuery.toLowerCase());
+                return matchesCategory && matchesSearch;
+            });
+        }
+
+        // Render Dish Cards with 3D Tilt Events
+        function renderDishes() {
+            const container = document.getElementById('dishesGrid');
+            const dishes = getFilteredDishes();
+            const emptyState = document.getElementById('emptySearchState');
+            const counter = document.getElementById('dishCounterBadge');
+
+            counter.innerText = `${dishes.length} Platos`;
+
+            if (dishes.length === 0) {
+                container.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+
+            container.innerHTML = dishes.map(dish => `
+                <div class="tilt-card-wrapper">
+                    <div onclick="openDishModal(${dish.id})" 
+                         onmousemove="handle3DTilt(event, this)" 
+                         onmouseleave="reset3DTilt(this)"
+                         class="tilt-card glass-card rounded-3xl p-5 cursor-pointer relative flex flex-col justify-between h-full group transition-all duration-300">
+                        
+                        <!-- Top Badge -->
+                        ${dish.badge ? `
+                            <div class="tilt-layer-badge absolute top-4 left-4 z-10 bg-black/70 border border-gold-500/40 text-gold-400 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full backdrop-blur-md">
+                                <i class="fa-solid fa-star text-[9px] mr-1"></i>${dish.badge}
+                            </div>
+                        ` : ''}
+
+                        <!-- Chicharrón Option Tag for Sopas -->
+                        ${dish.hasChicharronOption ? `
+                            <div class="tilt-layer-badge absolute top-4 right-4 z-10 bg-amber-600/80 text-black font-extrabold text-[10px] uppercase tracking-wider px-2.5 py-1 rounded-full backdrop-blur-md shadow-md">
+                                + Chicharrón $9.900
+                            </div>
+                        ` : ''}
+
+                        <div>
+                            <!-- Image Container with 3D parallax -->
+                            <div class="tilt-layer-img overflow-hidden rounded-2xl mb-5 h-48 sm:h-52 w-full relative bg-black/40">
+                                <img src="${dish.image}" alt="${dish.name}" 
+                                     onerror="this.src='https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80'"
+                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out filter brightness-95 group-hover:brightness-105">
+                                <div class="absolute inset-0 bg-gradient-to-t from-darkBg/90 via-transparent to-transparent opacity-60"></div>
+                            </div>
+
+                            <!-- Dish Info -->
+                            <div class="tilt-layer-3d">
+                                <h4 class="font-serif text-xl sm:text-2xl font-bold text-white group-hover:text-gold-400 transition-colors duration-300 leading-snug">
+                                    ${dish.name}
+                                </h4>
+                                <p class="text-xs text-gray-300 mt-2 line-clamp-2 leading-relaxed font-normal">
+                                    ${dish.description}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Price and Add Button CTA -->
+                        <div class="tilt-layer-3d pt-5 mt-4 border-t border-gold-500/10 flex items-center justify-between">
+                            <div>
+                                <span class="text-[10px] text-gray-400 uppercase tracking-widest block">Precio</span>
+                                <span class="font-serif text-xl font-bold text-gold-400">${formatCOP(dish.price)}</span>
+                            </div>
+
+                            <button onclick="event.stopPropagation(); openDishModal(${dish.id})" 
+                                    class="w-10 h-10 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-400 flex items-center justify-center group-hover:bg-gold-500 group-hover:text-black transition-all duration-300 shadow-md">
+                                <i class="fa-solid fa-plus text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Mouse 3D Tilt Effect Handler
+        function handle3DTilt(e, element) {
+            const rect = element.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+
+            const rotateX = ((y - centerY) / centerY) * -12;
+            const rotateY = ((x - centerX) / centerX) * 12;
+
+            element.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+        }
+
+        function reset3DTilt(element) {
+            element.style.transform = `rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
+        }
+
+        // Category Filtering
+        function filterCategory(cat) {
+            currentFilter = cat;
+            
+            // Update active tab styles
+            document.querySelectorAll('.cat-tab').forEach(tab => {
+                if (tab.getAttribute('data-cat') === cat) {
+                    tab.className = "cat-tab active flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 border border-gold-500/40 bg-gold-500 text-black shadow-lg shadow-gold-500/20";
+                } else {
+                    tab.className = "cat-tab flex items-center space-x-2 px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider transition-all duration-300 border border-gold-500/20 bg-white/5 text-gray-300 hover:text-gold-400 hover:border-gold-500/40";
+                }
+            });
+
+            // Category Titles Update
+            const titles = {
+                todos: "Menú Completo",
+                entradas: "Entradas & Abridores",
+                carnes: "Carnes de Temporada",
+                especialidad: "Especialidades & Tradición",
+                sopas: "Sopas de la Abuela",
+                bebidas: "Bebidas & Coctelería"
+            };
+
+            document.getElementById('currentCategoryTitle').innerText = titles[cat] || "Platos Exclusivos";
+            renderDishes();
+        }
+
+        // Search Input Logic
+        function handleSearch(val) {
+            searchQuery = val;
+            renderDishes();
+        }
+
+        function resetFilters() {
+            searchQuery = '';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchInputMobile').value = '';
+            filterCategory('todos');
+        }
+
+        // Open Dish Detail Modal
+        function openDishModal(id) {
+            const dish = menuDishes.find(d => d.id === id);
+            if (!dish) return;
+
+            const modal = document.getElementById('dishModal');
+            const modalBody = document.getElementById('modalBody');
+
+            let customOptionsHTML = '';
+
+            // Meat Choice Radio options
+            if (dish.meatChoice) {
+                customOptionsHTML += `
+                    <div class="mb-4">
+                        <label class="block text-xs uppercase tracking-widest text-gold-400 font-bold mb-2">Selecciona la Carne:</label>
+                        <div class="space-y-2">
+                            ${dish.meatChoice.map((m, idx) => `
+                                <label class="flex items-center space-x-3 bg-white/5 p-3 rounded-xl border border-white/10 cursor-pointer hover:border-gold-500/40">
+                                    <input type="radio" name="modalMeat" value="${m}" ${idx === 0 ? 'checked' : ''} class="accent-gold-500">
+                                    <span class="text-xs font-medium text-white">${m}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Meat Doneness options for steaks
+            if (dish.doneness) {
+                customOptionsHTML += `
+                    <div class="mb-4">
+                        <label class="block text-xs uppercase tracking-widest text-gold-400 font-bold mb-2">Término de la Carne:</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            ${dish.doneness.map((d, idx) => `
+                                <label class="flex flex-col items-center justify-center p-2 rounded-xl bg-white/5 border border-white/10 cursor-pointer text-center hover:border-gold-500/40">
+                                    <input type="radio" name="modalDoneness" value="${d}" ${idx === 1 ? 'checked' : ''} class="accent-gold-500 mb-1">
+                                    <span class="text-[11px] text-white">${d}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Flavor options for Juices
+            if (dish.flavors) {
+                customOptionsHTML += `
+                    <div class="mb-4">
+                        <label class="block text-xs uppercase tracking-widest text-gold-400 font-bold mb-2">Elige el Sabor:</label>
+                        <select id="modalFlavor" class="w-full bg-darkBg border border-gold-500/30 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-gold-500">
+                            ${dish.flavors.map(f => `<option value="${f}">${f}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+            }
+
+            // Extra Chicharrón Option for Sopas
+            if (dish.hasChicharronOption) {
+                customOptionsHTML += `
+                    <div class="mb-4 bg-amber-500/10 border border-amber-500/30 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer" onclick="toggleChicharronCheck()">
+                        <div class="flex items-center space-x-3">
+                            <input type="checkbox" id="addChicharronCheck" class="w-4 h-4 accent-gold-500 rounded">
+                            <div>
+                                <span class="text-xs font-bold text-white block">Adición de Chicharrón Crocante</span>
+                                <span class="text-[10px] text-gold-400">+ $9.900 al valor del plato</span>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-bacon text-amber-400 text-lg"></i>
+                    </div>
+                `;
+            }
+
+            modalBody.innerHTML = `
+                <div class="relative h-64 sm:h-72 w-full bg-black">
+                    <img src="${dish.image}" alt="${dish.name}" class="w-full h-full object-cover">
+                    <div class="absolute inset-0 bg-gradient-to-t from-darkCard via-darkCard/40 to-transparent"></div>
+                    ${dish.badge ? `
+                        <span class="absolute top-4 left-4 bg-black/80 border border-gold-500/40 text-gold-400 text-xs font-bold px-3 py-1 rounded-full">
+                            ${dish.badge}
+                        </span>
+                    ` : ''}
+                </div>
+
+                <div class="p-6 sm:p-8 -mt-8 relative z-10">
+                    <div class="flex justify-between items-start mb-3">
+                        <h3 class="font-serif text-2xl sm:text-3xl font-bold text-white">${dish.name}</h3>
+                        <span class="font-serif text-2xl font-extrabold text-gold-400">${formatCOP(dish.price)}</span>
+                    </div>
+
+                    <p class="text-xs sm:text-sm text-gray-300 leading-relaxed mb-6 font-normal">
+                        ${dish.description}
+                    </p>
+
+                    ${customOptionsHTML}
+
+                    <!-- Special instructions note -->
+                    <div class="mb-6">
+                        <label class="block text-xs uppercase tracking-widest text-gold-400 font-bold mb-2">Instrucciones Especiales:</label>
+                        <input type="text" id="modalNotes" placeholder="Ej: Poca sal, salsa aparte..." class="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-gold-500">
+                    </div>
+
+                    <!-- Add to order CTA -->
+                    <button onclick="addModalToCart(${dish.id})" class="w-full shimmer-btn py-4 rounded-2xl text-black font-extrabold text-xs uppercase tracking-widest shadow-2xl flex items-center justify-center space-x-2">
+                        <i class="fa-solid fa-cart-plus text-base"></i>
+                        <span>Agregar a Mi Pedido</span>
+                    </button>
+                </div>
+            `;
+
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            modal.children[0].classList.remove('scale-95');
+            modal.children[0].classList.add('scale-100');
+        }
+
+        function toggleChicharronCheck() {
+            const chk = document.getElementById('addChicharronCheck');
+            if (chk) chk.checked = !chk.checked;
+        }
+
+        function closeDishModal() {
+            const modal = document.getElementById('dishModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            modal.children[0].classList.remove('scale-100');
+            modal.children[0].classList.add('scale-95');
+        }
+
+        // Add Dish from Modal to Cart State
+        function addModalToCart(dishId) {
+            const dish = menuDishes.find(d => d.id === dishId);
+            if (!dish) return;
+
+            let finalPrice = dish.price;
+            let titleAddons = [];
+
+            // Read meat option
+            const meatRadio = document.querySelector('input[name="modalMeat"]:checked');
+            if (meatRadio) titleAddons.push(meatRadio.value);
+
+            // Read doneness option
+            const donenessRadio = document.querySelector('input[name="modalDoneness"]:checked');
+            if (donenessRadio) titleAddons.push(`Término: ${donenessRadio.value}`);
+
+            // Read flavor select
+            const flavorSelect = document.getElementById('modalFlavor');
+            if (flavorSelect) titleAddons.push(`Sabor: ${flavorSelect.value}`);
+
+            // Read extra Chicharrón
+            const chkChicharron = document.getElementById('addChicharronCheck');
+            if (chkChicharron && chkChicharron.checked) {
+                finalPrice += 9900;
+                titleAddons.push("+ Adición Chicharrón ($9.900)");
+            }
+
+            // Read notes
+            const notesInput = document.getElementById('modalNotes');
+            const noteText = notesInput ? notesInput.value.trim() : '';
+
+            const cartItem = {
+                cartId: Date.now(),
+                dishId: dish.id,
+                name: dish.name,
+                basePrice: dish.price,
+                unitPrice: finalPrice,
+                quantity: 1,
+                addons: titleAddons,
+                note: noteText,
+                image: dish.image
+            };
+
+            cart.push(cartItem);
+            updateCartUI();
+            closeDishModal();
+            toggleCartModal(true); // Open Cart Drawer to show confirmation
+        }
+
+        // Toggle Cart Drawer
+        function toggleCartModal(forceOpen = false) {
+            const drawer = document.getElementById('cartDrawer');
+            if (forceOpen || drawer.classList.contains('translate-x-full')) {
+                drawer.classList.remove('translate-x-full');
+            } else {
+                drawer.classList.add('translate-x-full');
+            }
+        }
+
+        // Cart State & UI Updates
+        function updateCartUI() {
+            const countBadge = document.getElementById('cartBadgeCount');
+            const container = document.getElementById('cartItemsContainer');
+            const subtotalEl = document.getElementById('cartSubtotal');
+            const tipEl = document.getElementById('cartTip');
+            const totalEl = document.getElementById('cartTotal');
+
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            countBadge.innerText = totalItems;
+
+            if (cart.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-12">
+                        <i class="fa-solid fa-basket-shopping text-4xl text-gray-600 mb-3"></i>
+                        <p class="text-sm font-medium text-gray-400">Tu pedido está vacío</p>
+                        <p class="text-xs text-gray-500 mt-1">Explora el menú y agrega tus platos favoritos.</p>
+                    </div>
+                `;
+                subtotalEl.innerText = "$0";
+                tipEl.innerText = "$0";
+                totalEl.innerText = "$0";
+                return;
+            }
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+            const tip = subtotal * 0.10;
+            const total = subtotal + tip;
+
+            subtotalEl.innerText = formatCOP(subtotal);
+            tipEl.innerText = formatCOP(tip);
+            totalEl.innerText = formatCOP(total);
+
+            container.innerHTML = cart.map((item, index) => `
+                <div class="glass-card rounded-2xl p-4 flex items-center space-x-3 relative border-gold-500/20">
+                    <img src="${item.image}" class="w-14 h-14 rounded-xl object-cover flex-shrink-0">
+                    
+                    <div class="flex-1 min-w-0">
+                        <h5 class="text-xs font-bold text-white truncate">${item.name}</h5>
+                        ${item.addons.length > 0 ? `<p class="text-[10px] text-gold-400 leading-tight truncate">${item.addons.join(', ')}</p>` : ''}
+                        ${item.note ? `<p class="text-[10px] text-gray-400 italic">"${item.note}"</p>` : ''}
+                        <span class="text-xs font-serif font-bold text-gold-400 mt-1 block">${formatCOP(item.unitPrice * item.quantity)}</span>
+                    </div>
+
+                    <!-- Quantity Controls -->
+                    <div class="flex items-center space-x-2 bg-black/40 border border-gold-500/30 rounded-lg p-1">
+                        <button onclick="changeQty(${index}, -1)" class="w-5 h-5 text-gold-400 flex items-center justify-center text-xs hover:bg-gold-500 hover:text-black rounded transition">-</button>
+                        <span class="text-xs text-white font-bold px-1">${item.quantity}</span>
+                        <button onclick="changeQty(${index}, 1)" class="w-5 h-5 text-gold-400 flex items-center justify-center text-xs hover:bg-gold-500 hover:text-black rounded transition">+</button>
+                    </div>
+
+                    <!-- Delete item -->
+                    <button onclick="removeItem(${index})" class="text-gray-500 hover:text-red-400 text-xs ml-1 transition">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function changeQty(index, delta) {
+            cart[index].quantity += delta;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1);
+            }
+            updateCartUI();
+        }
+
+        function removeItem(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        // WhatsApp Checkout Direct Link Generator
+        function sendOrderToWhatsApp() {
+            if (cart.length === 0) {
+                alert("Tu pedido está vacío. Agrega platos antes de continuar.");
+                return;
+            }
+
+            const tableNum = document.getElementById('tableInput').value.trim() || "No especificada";
+            const customerName = document.getElementById('customerNameInput').value.trim() || "Cliente";
+
+            const subtotal = cart.reduce((sum, item) => sum + (item.unitPrice * item.quantity), 0);
+            const tip = subtotal * 0.10;
+            const total = subtotal + tip;
+
+            let text = `*NUEVO PEDIDO - SIROCCO KITCHEN & COFFEE*\n`;
+            text += `------------------------------------\n`;
+            text += `👤 *Cliente:* ${customerName}\n`;
+            text += `📍 *Mesa/Ubicación:* ${tableNum}\n`;
+            text += `------------------------------------\n\n`;
+            text += `*DETALLE DEL PEDIDO:*\n`;
+
+            cart.forEach((item, i) => {
+                text += `${i + 1}. *${item.name}* (x${item.quantity})\n`;
+                if (item.addons.length > 0) {
+                    text += `   ↳ _${item.addons.join(', ')}_\n`;
+                }
+                if (item.note) {
+                    text += `   ↳ _Nota: ${item.note}_\n`;
+                }
+                text += `   Subtotal: ${formatCOP(item.unitPrice * item.quantity)}\n\n`;
+            });
+
+            text += `------------------------------------\n`;
+            text += `Subtotal: ${formatCOP(subtotal)}\n`;
+            text += `Servicio (10%): ${formatCOP(tip)}\n`;
+            text += `*TOTAL A PAGAR: ${formatCOP(total)}*\n`;
+            text += `------------------------------------\n`;
+            text += `¡Gracias por elegir Sirocco! ✨`;
+
+            const encodedMsg = encodeURIComponent(text);
+            const whatsappNum = "573000000000"; // Placeholder restaurant phone
+            window.open(`https://wa.me/${whatsappNum}?text=${encodedMsg}`, '_blank');
+        }
+    </script>
+</body>
+</html>
